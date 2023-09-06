@@ -1,40 +1,29 @@
-package vm
+package luluo
 
 import (
 	"time"
 )
 
-func MinusFunc(left, right func(Context) (Value, error)) func(Context) (Value, error) {
-	return func(ctx Context) (Value, error) {
-		leftValue, err := left(ctx)
-		if err != nil {
-			return Null(), err
-		}
-		rightValue, err := right(ctx)
-		if err != nil {
-			return Null(), err
-		}
-
-		switch rightValue.Type {
-		case ValueNull:
-			return Null(), NewArithmeticError("-", leftValue.Type.String(), rightValue.Type.String())
-		case ValueBool:
-			return Null(), NewArithmeticError("-", leftValue.Type.String(), rightValue.Type.String())
-		case ValueString:
-			return Null(), NewArithmeticError("-", leftValue.Type.String(), rightValue.Type.String())
-		case ValueInt64:
-			return minusInt(leftValue, rightValue.IntValue())
-		case ValueUint64:
-			return minusUint(leftValue, rightValue.UintValue())
-		case ValueFloat64:
-			return minusFloat(leftValue, rightValue.FloatValue())
-		case ValueDatetime:
-			return minusDatetime(leftValue, IntToDatetime(rightValue.IntValue()))
-		case ValueInterval:
-			return minusInterval(leftValue, IntToInterval(rightValue.IntValue()))
-		default:
-			return Null(), NewArithmeticError("-", leftValue.Type.String(), rightValue.Type.String())
-		}
+func Minus(leftValue, rightValue Value) (Value, error) {
+	switch rightValue.Type {
+	case ValueNull:
+		return Null(), NewArithmeticError("-", leftValue.Type.String(), rightValue.Type.String())
+	case ValueBool:
+		return Null(), NewArithmeticError("-", leftValue.Type.String(), rightValue.Type.String())
+	case ValueString:
+		return Null(), NewArithmeticError("-", leftValue.Type.String(), rightValue.Type.String())
+	case ValueInt64:
+		return minusInt(leftValue, rightValue.IntValue())
+	case ValueUint64:
+		return minusUint(leftValue, rightValue.UintValue())
+	case ValueFloat64:
+		return minusFloat(leftValue, rightValue.FloatValue())
+	case ValueDatetime:
+		return minusDatetime(leftValue, IntToDatetime(rightValue.IntValue()))
+	case ValueInterval:
+		return minusInterval(leftValue, IntToInterval(rightValue.IntValue()))
+	default:
+		return Null(), NewArithmeticError("-", leftValue.Type.String(), rightValue.Type.String())
 	}
 }
 

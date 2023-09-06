@@ -1,36 +1,25 @@
-package vm
+package luluo
 
-func MultFunc(left, right func(Context) (Value, error)) func(Context) (Value, error) {
-	return func(ctx Context) (Value, error) {
-		leftValue, err := left(ctx)
-		if err != nil {
-			return Null(), err
-		}
-		rightValue, err := right(ctx)
-		if err != nil {
-			return Null(), err
-		}
-
-		switch rightValue.Type {
-		case ValueNull:
-			return Null(), NewArithmeticError("*", leftValue.Type.String(), rightValue.Type.String())
-		case ValueBool:
-			return Null(), NewArithmeticError("*", leftValue.Type.String(), rightValue.Type.String())
-		case ValueString:
-			return Null(), NewArithmeticError("*", leftValue.Type.String(), rightValue.Type.String())
-		case ValueInt64:
-			return multInt(leftValue, rightValue.IntValue())
-		case ValueUint64:
-			return multUint(leftValue, rightValue.UintValue())
-		case ValueFloat64:
-			return multFloat(leftValue, rightValue.FloatValue())
-		// case ValueDatetime:
-		//   return multDatetime(leftValue, IntToDatetime(rightValue.IntValue()))
-		// case ValueInterval:
-		//   return multInterval(leftValue, IntToInterval(rightValue.IntValue()))
-		default:
-			return Null(), NewArithmeticError("*", leftValue.Type.String(), rightValue.Type.String())
-		}
+func Mult(leftValue, rightValue Value) (Value, error) {
+	switch rightValue.Type {
+	case ValueNull:
+		return Null(), NewArithmeticError("*", leftValue.Type.String(), rightValue.Type.String())
+	case ValueBool:
+		return Null(), NewArithmeticError("*", leftValue.Type.String(), rightValue.Type.String())
+	case ValueString:
+		return Null(), NewArithmeticError("*", leftValue.Type.String(), rightValue.Type.String())
+	case ValueInt64:
+		return multInt(leftValue, rightValue.IntValue())
+	case ValueUint64:
+		return multUint(leftValue, rightValue.UintValue())
+	case ValueFloat64:
+		return multFloat(leftValue, rightValue.FloatValue())
+	// case ValueDatetime:
+	//   return multDatetime(leftValue, IntToDatetime(rightValue.IntValue()))
+	// case ValueInterval:
+	//   return multInterval(leftValue, IntToInterval(rightValue.IntValue()))
+	default:
+		return Null(), NewArithmeticError("*", leftValue.Type.String(), rightValue.Type.String())
 	}
 }
 

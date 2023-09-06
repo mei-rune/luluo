@@ -1,36 +1,25 @@
-package vm
+package luluo
 
-func IntDivFunc(left, right func(Context) (Value, error)) func(Context) (Value, error) {
-	return func(ctx Context) (Value, error) {
-		leftValue, err := left(ctx)
-		if err != nil {
-			return Null(), err
-		}
-		rightValue, err := right(ctx)
-		if err != nil {
-			return Null(), err
-		}
-
-		switch rightValue.Type {
-		case ValueNull:
-			return Null(), NewArithmeticError("div", leftValue.Type.String(), rightValue.Type.String())
-		case ValueBool:
-			return Null(), NewArithmeticError("div", leftValue.Type.String(), rightValue.Type.String())
-		case ValueString:
-			return Null(), NewArithmeticError("div", leftValue.Type.String(), rightValue.Type.String())
-		case ValueInt64:
-			return intDivInt(leftValue, rightValue.IntValue())
-		case ValueUint64:
-			return intDivUint(leftValue, rightValue.UintValue())
-		// case ValueFloat64:
-		//   return intDivFloat(leftValue, rightValue.FloatValue())
-		// case ValueDatetime:
-		//   return intDivDatetime(leftValue, IntToDatetime(rightValue.IntValue()))
-		// case ValueInterval:
-		//   return intDivInterval(leftValue, IntToInterval(rightValue.IntValue()))
-		default:
-			return Null(), NewArithmeticError("div", leftValue.Type.String(), rightValue.Type.String())
-		}
+func IntDiv(leftValue, rightValue Value) (Value, error) {
+	switch rightValue.Type {
+	case ValueNull:
+		return Null(), NewArithmeticError("div", leftValue.Type.String(), rightValue.Type.String())
+	case ValueBool:
+		return Null(), NewArithmeticError("div", leftValue.Type.String(), rightValue.Type.String())
+	case ValueString:
+		return Null(), NewArithmeticError("div", leftValue.Type.String(), rightValue.Type.String())
+	case ValueInt64:
+		return intDivInt(leftValue, rightValue.IntValue())
+	case ValueUint64:
+		return intDivUint(leftValue, rightValue.UintValue())
+	// case ValueFloat64:
+	//   return intDivFloat(leftValue, rightValue.FloatValue())
+	// case ValueDatetime:
+	//   return intDivDatetime(leftValue, IntToDatetime(rightValue.IntValue()))
+	// case ValueInterval:
+	//   return intDivInterval(leftValue, IntToInterval(rightValue.IntValue()))
+	default:
+		return Null(), NewArithmeticError("div", leftValue.Type.String(), rightValue.Type.String())
 	}
 }
 

@@ -1,36 +1,25 @@
-package vm
+package luluo
 
-func ModFunc(left, right func(Context) (Value, error)) func(Context) (Value, error) {
-	return func(ctx Context) (Value, error) {
-		leftValue, err := left(ctx)
-		if err != nil {
-			return Null(), err
-		}
-		rightValue, err := right(ctx)
-		if err != nil {
-			return Null(), err
-		}
-
-		switch rightValue.Type {
-		case ValueNull:
-			return Null(), NewArithmeticError("mod", leftValue.Type.String(), rightValue.Type.String())
-		case ValueBool:
-			return Null(), NewArithmeticError("mod", leftValue.Type.String(), rightValue.Type.String())
-		case ValueString:
-			return Null(), NewArithmeticError("mod", leftValue.Type.String(), rightValue.Type.String())
-		case ValueInt64:
-			return modInt(leftValue, rightValue.IntValue())
-		case ValueUint64:
-			return modUint(leftValue, rightValue.UintValue())
-		// case ValueFloat64:
-		//   return modFloat(leftValue, rightValue.FloatValue())
-		// case ValueDatetime:
-		//   return modDatetime(leftValue, IntToDatetime(rightValue.IntValue()))
-		// case ValueInterval:
-		//   return modInterval(leftValue, IntToInterval(rightValue.IntValue()))
-		default:
-			return Null(), NewArithmeticError("mod", leftValue.Type.String(), rightValue.Type.String())
-		}
+func Mod(leftValue, rightValue Value) (Value, error) {
+	switch rightValue.Type {
+	case ValueNull:
+		return Null(), NewArithmeticError("mod", leftValue.Type.String(), rightValue.Type.String())
+	case ValueBool:
+		return Null(), NewArithmeticError("mod", leftValue.Type.String(), rightValue.Type.String())
+	case ValueString:
+		return Null(), NewArithmeticError("mod", leftValue.Type.String(), rightValue.Type.String())
+	case ValueInt64:
+		return modInt(leftValue, rightValue.IntValue())
+	case ValueUint64:
+		return modUint(leftValue, rightValue.UintValue())
+	// case ValueFloat64:
+	//   return modFloat(leftValue, rightValue.FloatValue())
+	// case ValueDatetime:
+	//   return modDatetime(leftValue, IntToDatetime(rightValue.IntValue()))
+	// case ValueInterval:
+	//   return modInterval(leftValue, IntToInterval(rightValue.IntValue()))
+	default:
+		return Null(), NewArithmeticError("mod", leftValue.Type.String(), rightValue.Type.String())
 	}
 }
 
