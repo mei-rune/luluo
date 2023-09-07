@@ -20,3 +20,7 @@ func (v Value) Uminus() (Value, error) {
 		return Null(), NewArithmeticError("-", v.Type.String(), "")
 	}
 }
+
+func  Uminus(v Value) (Value, error) {
+	return v.Uminus()
+}

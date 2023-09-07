@@ -9,11 +9,11 @@ func Div(leftValue, rightValue Value) (Value, error) {
 	case ValueString:
 		return Null(), NewArithmeticError("/", leftValue.Type.String(), rightValue.Type.String())
 	case ValueInt64:
-		return divInt(leftValue, rightValue.IntValue())
+		return DivInt(leftValue, rightValue.IntValue())
 	case ValueUint64:
-		return divUint(leftValue, rightValue.UintValue())
+		return DivUint(leftValue, rightValue.UintValue())
 	case ValueFloat64:
-		return divFloat(leftValue, rightValue.FloatValue())
+		return DivFloat(leftValue, rightValue.FloatValue())
 	// case ValueDatetime:
 	//   return divDatetime(leftValue, IntToDatetime(rightValue.IntValue()))
 	// case ValueInterval:
@@ -23,7 +23,7 @@ func Div(leftValue, rightValue Value) (Value, error) {
 	}
 }
 
-func divInt(left Value, right int64) (Value, error) {
+func DivInt(left Value, right int64) (Value, error) {
 	switch left.Type {
 	case ValueNull:
 		return Null(), NewArithmeticError("/", left.Type.String(), "int")
@@ -42,7 +42,7 @@ func divInt(left Value, right int64) (Value, error) {
 	}
 }
 
-func divUint(left Value, right uint64) (Value, error) {
+func DivUint(left Value, right uint64) (Value, error) {
 	switch left.Type {
 	case ValueNull:
 		return Null(), NewArithmeticError("/", left.Type.String(), "uint")
@@ -61,7 +61,7 @@ func divUint(left Value, right uint64) (Value, error) {
 	}
 }
 
-func divFloat(left Value, right float64) (Value, error) {
+func DivFloat(left Value, right float64) (Value, error) {
 	switch left.Type {
 	case ValueNull:
 		return Null(), NewArithmeticError("/", left.Type.String(), "float")

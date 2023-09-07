@@ -529,6 +529,10 @@ func FloatToValue(value float64) Value {
 	}
 }
 
+func StrToValue(value string) Value {
+	return StringToValue(value)
+}
+
 func StringToValue(value string) Value {
 	return Value{
 		Type: ValueString,
