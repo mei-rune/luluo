@@ -3,7 +3,15 @@ package luluo
 import (
 	"math"
 	"testing"
+	"unsafe"
 )
+
+func TestSize(t *testing.T) {
+	size := unsafe.Sizeof(Value{})
+	if size != 64 {
+		t.Error("size =", size)
+	}
+}
 
 func TestGetComparer(t *testing.T) {
 

@@ -134,11 +134,13 @@ func IntToInterval(t int64) time.Duration {
 
 type Value struct {
 	Type ValueType
-	// Bool    bool
 	Str     string
 	Int64   int64
 	Float64 float64
 	Any     interface{}
+
+	// 为了对齐为 64 个字节 
+	Reserved int64
 }
 
 func (v *Value) BoolValue() bool {
