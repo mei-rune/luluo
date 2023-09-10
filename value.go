@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding"
 	"encoding/json"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -24,6 +25,7 @@ const (
 	ValueFloat64
 	ValueDatetime
 	ValueInterval
+	ValueBytes
 	ValueAny
 )
 
@@ -47,6 +49,8 @@ func (v ValueType) String() string {
 		return "interval"
 	case ValueAny:
 		return "any"
+	case ValueBytes:
+		return "bytes"
 	default:
 		return "unknown_" + strconv.FormatInt(int64(v), 10)
 	}
@@ -138,9 +142,7 @@ type Value struct {
 	Int64   int64
 	Float64 float64
 	Any     interface{}
-
-	// 为了对齐为 64 个字节 
-	Reserved int64
+	Bytes []byte
 }
 
 func (v *Value) BoolValue() bool {
@@ -175,6 +177,10 @@ func (v *Value) DurationValue() time.Duration {
 	return IntToDuration(v.Int64)
 }
 
+func (v *Value) ByteArrayValue() []byte {
+	return v.Bytes
+}
+
 func (v *Value) AnyValue() interface{} {
 	return v.Any
 }
@@ -203,6 +209,8 @@ func (v *Value) String() string {
 		return IntToDatetime(v.Int64).Format(time.RFC3339)
 	case ValueInterval:
 		return "interval " + time.Duration(v.Int64).String()
+	case ValueBytes:
+		return "0x" +  hex.EncodeToString(v.Bytes)
 	case ValueAny:
 		bs, err := json.Marshal(v.Any)
 		if err != nil {
@@ -232,6 +240,8 @@ func (v *Value) ToSQLTypeLiteral() string {
 		return "Datetime"
 	case ValueInterval:
 		return "INTEGER"
+	case ValueBytes:
+		return "Bytea"
 	case ValueAny:
 		return "TEXT"
 	default:
@@ -273,6 +283,11 @@ func (v *Value) ToString(w io.Writer) {
 		io.WriteString(w, "'interval ")
 		io.WriteString(w, IntToDuration(v.Int64).String())
 		io.WriteString(w, "'")
+	case ValueBytes:
+		// 转成
+		io.WriteString(w, "toBinary('")
+		io.WriteString(w, hex.EncodeToString(v.Bytes))
+		io.WriteString(w, "')")
 	case ValueAny:
 		err := json.NewEncoder(w).Encode(v.Any)
 		if err != nil {
@@ -483,6 +498,8 @@ func ToValue(value interface{}) (Value, error) {
 		return DatetimeToValue(v), nil
 	case time.Duration:
 		return IntervalToValue(v), nil
+	case []byte:
+		return ByteArrayToValue(v), nil
 	case Value:
 		return v, nil
 	}
@@ -576,6 +593,13 @@ func DurationToValue(value time.Duration) Value {
 	return Value{
 		Type:  ValueInterval,
 		Int64: int64(value),
+	}
+}
+
+func ByteArrayToValue(bs []byte) Value {
+	return Value{
+		Type:  ValueBytes,
+		Bytes: bs,
 	}
 }
 
