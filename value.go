@@ -145,6 +145,33 @@ type Value struct {
 	Bytes []byte
 }
 
+func (v Value) ToInterface() interface{} {
+	switch v.Type {
+	case ValueNull:
+		return nil
+	case ValueBool:
+		return v.BoolValue()
+	case ValueString:
+		return v.StrValue()
+	case ValueInt64:
+		return v.IntValue()
+	case ValueUint64:
+		return v.UintValue()
+	case ValueFloat64:
+		return v.FloatValue()
+	case ValueDatetime:
+		return v.DatetimeValue()
+	case ValueInterval:
+		return v.DurationValue()
+	case ValueBytes:
+		return v.ByteArrayValue()
+	case ValueAny:
+		return v.AnyValue()
+	default:
+		panic(ErrUnknownValueType)
+	}
+}
+
 func (v *Value) BoolValue() bool {
 	return v.Int64 != 0
 }
