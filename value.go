@@ -460,9 +460,49 @@ func (v *Value) marshalText() ([]byte, error) {
 	}
 }
 
+func (v Value) WriteJSON(w io.Writer)  error {
+	switch v.Type {
+	case ValueNull:
+		_, err := w.Write([]byte("null"))
+		return err
+	case ValueBool:
+		if v.BoolValue() {
+			_, err :=  w.Write([]byte("true"))
+			return err
+		}
+		_, err :=  w.Write([]byte("false"))
+		return err
+	case ValueString:
+		return  json.NewEncoder(w).Encode(v.Str)
+	case ValueInt64:
+		_, err :=  w.Write([]byte(strconv.FormatInt(v.Int64, 10)))
+		return err
+	case ValueUint64:
+		_, err :=  w.Write([]byte(strconv.FormatUint(uint64(v.Int64), 10)))
+		return err
+	case ValueFloat64:
+		_, err :=  w.Write([]byte(strconv.FormatFloat(v.Float64, 'g', -1, 64)))
+		return err
+	case ValueDatetime:
+		w.Write([]byte{'"'})
+ 		w.Write([]byte(IntToDatetime(v.Int64).Format(time.RFC3339)))
+		_, err :=  w.Write([]byte{'"'})
+		return err
+	case ValueInterval:
+		_, err :=  w.Write([]byte(strconv.FormatInt(v.Int64, 10)))
+		return err
+	case ValueAny:
+		return json.NewEncoder(w).Encode(v.Any)
+	default:
+		return ErrUnknownValueType
+	}
+}
+
 func (v Value) MarshalText() ([]byte, error) {
 	return v.marshalText()
 }
+
+
 
 var _ encoding.TextMarshaler = &Value{}
 
